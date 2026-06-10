@@ -3,10 +3,11 @@ import pandas as pd
 
 def calculate_hurwicz(decision_df, alpha):
   
-    decision_df = decision_df.apply(pd.to_numeric, errors="coerce").fillna(0)
+    df = decision_df.set_index("Alternatives")
+    df = df.apply(pd.to_numeric, errors="coerce").fillna(0)
 
-    max_per_alt = decision_df.max(axis=1)
-    min_per_alt = decision_df.min(axis=1)
+    max_per_alt = df.max(axis=1)
+    min_per_alt = df.min(axis=1)
 
     df_hurwicz = (alpha * max_per_alt) + ((1 - alpha) * min_per_alt)
 

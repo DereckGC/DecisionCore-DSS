@@ -186,11 +186,11 @@ def render_results_widgets(results_dict):
             df_view["POE"] = df_view.index.map(poes)
 
         if "resultados" in m_max:
-            maxs = {res["Alternativa"]: res["Valor"] for res in m_max["resultados"]}
+            maxs = {res["Alternatives"]: res["Valor"] for res in m_max["resultados"]}
             df_view["MAX"] = df_view.index.map(maxs)
             
         if "resultados" in m_min:
-            mins = {res["Alternativa"]: res["Valor"] for res in m_min["resultados"]}
+            mins = {res["Alternatives"]: res["Valor"] for res in m_min["resultados"]}
             df_view["MIN"] = df_view.index.map(mins)
 
         styled_df = df_view.style.format(f"{currency}{{:.0f}}").apply(highlight_vme_poe, axis=None)

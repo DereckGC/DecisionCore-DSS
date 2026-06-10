@@ -3,7 +3,6 @@ from features.desicion_analysis.components.decision_tables import decision_table
 from features.desicion_analysis.components.decision_config import decision_config
 from features.desicion_analysis.components.widgets_results import render_results_widgets
 from features.desicion_analysis.components.grafics_results import render_results_charts
-from features.desicion_analysis.components.monte_carlo_simulation import render_monte_carlo_simulation
 
 from features.desicion_analysis.logic.minimax import calculate_minimax
 from features.desicion_analysis.logic.maximax import calculate_maximax
@@ -45,4 +44,3 @@ def decision_analysis():
     if "decision_results" in st.session_state:
         render_results_widgets(st.session_state.decision_results)
         render_results_charts(st.session_state.decision_results)
-        #render_monte_carlo_simulation(st.session_state.decision_results)
