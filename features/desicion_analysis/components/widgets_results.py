@@ -84,6 +84,9 @@ def render_results_widgets(results_dict):
         if "POE" in df.columns:
             poe_values = pd.to_numeric(df["POE"], errors="coerce")
             styles.loc[poe_values == poe_values.min(), "POE"] = (
+                "background-color: #14532d; color: #dcfce7; font-weight: 700;"
+            )
+            styles.loc[poe_values == poe_values.max(), "POE"] = (
                 "background-color: #7f1d1d; color: #fee2e2; font-weight: 700;"
             )
 
@@ -97,7 +100,7 @@ def render_results_widgets(results_dict):
     m_poe = results_dict.get("poe", {})
     veip = results_dict.get("veip", None)
     vecip = results_dict.get("vecip", None)
-    
+
     alpha = st.session_state.get("alpha_hurwicz", 0.5)
 
     st.markdown('<div class="section-title">Resultados por criterio</div>', unsafe_allow_html=True)
@@ -188,7 +191,7 @@ def render_results_widgets(results_dict):
         if "resultados" in m_max:
             maxs = {res["Alternatives"]: res["Valor"] for res in m_max["resultados"]}
             df_view["MAX"] = df_view.index.map(maxs)
-            
+
         if "resultados" in m_min:
             mins = {res["Alternatives"]: res["Valor"] for res in m_min["resultados"]}
             df_view["MIN"] = df_view.index.map(mins)
