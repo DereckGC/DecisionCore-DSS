@@ -2,9 +2,14 @@ import streamlit as st
 import pandas as pd
 
 TABLE_STRUCTURE = {
-    "Alternatives": ["Planta Grande", "Planta Pequeña", "No Hacer Nada"],
-    "Mercado Favorable": [200000, 100000, 0],
-    "Mercado Desfavorable": [-180000, -20000, 0],
+    "Alternatives": [
+        "Capacidad Base (1 Turno)", 
+        "Expansión Modular (2 Turnos + Automatización)", 
+        "Planta de Alta Intensidad (Turnos 24/7)"
+    ],
+    "Demanda Alta": [50000, 250000, 450000],
+    "Demanda Moderada": [150000, 200000, 50000],
+    "Demanda Baja": [100000, -50000, -300000],
 }
 
 def on_table_change():
