@@ -12,6 +12,8 @@ from features.desicion_analysis.logic.laplace import calculate_laplace
 from features.desicion_analysis.logic.poe import calculate_poe
 from features.desicion_analysis.logic.vecip import calculate_vecip
 from features.desicion_analysis.logic.veip import calculate_veip
+from features.desicion_analysis.components.monte_carlo_simulation import render_montecarlo
+
 
 def decision_analysis():
     st.subheader("Analisis de Desición")
@@ -24,8 +26,11 @@ def decision_analysis():
         res_minimax = calculate_minimax(st.session_state.decision_df)
 
         if res_maximax is not None and res_minimax is not None:
-            res_vme = calculate_vme(st.session_state.decision_df)
-            res_vecip = calculate_vecip(res_maximax, res_minimax)
+
+            probs = st.session_state.get("prob_markets", [])
+
+            res_vme = calculate_vme(st.session_state.decision_df, probs)
+            res_vecip = calculate_vecip(res_maximax, res_minimax, probs)
 
             diccionario_resultados = {
                 "maximax": res_maximax,
@@ -44,3 +49,6 @@ def decision_analysis():
     if "decision_results" in st.session_state:
         render_results_widgets(st.session_state.decision_results)
         render_results_charts(st.session_state.decision_results)
+
+    st.divider()
+    render_montecarlo()

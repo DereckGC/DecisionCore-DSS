@@ -1,17 +1,13 @@
 import streamlit as st
 import pandas as pd
 
-def calculate_vme(decision_df):
+def calculate_vme(decision_df, probs):
 
     df_calc = decision_df.set_index("Alternatives")
     df_calc = df_calc.apply(pd.to_numeric, errors='coerce').fillna(0)
 
-    probs = st.session_state.get("prob_markets", [])
-    if len(probs) != len(df_calc.columns):
-        probs = [1 / len(df_calc.columns)] * len(df_calc.columns)
-
     df_weighted = df_calc.multiply(probs, axis=1)
-    
+
     vme_sums = df_weighted.sum(axis=1)
 
     best_value = vme_sums.max()
