@@ -1,4 +1,5 @@
 import streamlit as st
+from features.forecast.forecast_view import forecast_view
 
 FORECAST_MODULE = "📈 Forecast"
 DESCICION_MODULE = "⚖️ Desicion Tables"
@@ -28,7 +29,7 @@ def menu_selection(option):
 
     if(option == FORECAST_MODULE):
         #llamada al modulo
-        print(f"Modulo {FORECAST_MODULE}")
+        forecast_view()
 
     elif(option == DESCICION_MODULE):
         #llamada al modulo
