@@ -1,18 +1,19 @@
 import streamlit as st
 from features.forecast.forecast_view import forecast_view
+from features.desicion_analysis.desicion_analysis_view import decision_analysis
 
-FORECAST_MODULE = "📈 Forecast"
-DESCICION_MODULE = "⚖️ Desicion Tables"
-INVENTORY_MODULE = "📦 Inventory"
-DISCOUNTS_MODULE = "🏷️ Discounts"
+FORECAST_MODULE = "📈 Pronosticos"
+DESCICION_MODULE = "⚖️ Análisis de Desición"
+INVENTORY_MODULE = "📦 Inventario"
+DISCOUNTS_MODULE = "🏷️ Modelo de Descuentos"
 
 def sidebar():
-    st.sidebar.header("Management")
-    st.sidebar.image("assets\dss_icon.png")
+    st.sidebar.header("Gestión")
+    st.sidebar.image("assets/dss_icon.png")
     st.sidebar.divider()
 
     option = st.sidebar.radio(
-        "System Modules",
+        "Módulos del Sistema",
         [
             FORECAST_MODULE,
             DESCICION_MODULE,
@@ -30,15 +31,12 @@ def menu_selection(option):
     if(option == FORECAST_MODULE):
         #llamada al modulo
         forecast_view()
-
     elif(option == DESCICION_MODULE):
         #llamada al modulo
-        print(f"Modulo {DESCICION_MODULE}")
-
+        decision_analysis()
     elif(option == INVENTORY_MODULE):
         #llamada al modulo
-        print(f"Modulo {INVENTORY_MODULE}")
-
+        print(f"Modulo {FORECAST_MODULE}")
     elif(option == DISCOUNTS_MODULE):
         #llamada al modulo
-        print(f"Modulo {DISCOUNTS_MODULE}")
+        print(f"Modulo {FORECAST_MODULE}")

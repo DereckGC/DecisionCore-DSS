@@ -32,8 +32,8 @@ def forecast_view():
                 if x.strip()
             ]
 
-            if len(data_list) < 2:
-                st.error("Debes ingresar al menos 2 datos.")
+            if len(data_list) < 4:
+                st.error("Debes ingresar al menos 4 datos.")
                 return
 
             st.session_state.data = data_list
