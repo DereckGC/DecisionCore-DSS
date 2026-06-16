@@ -2,14 +2,7 @@ import streamlit as st
 import pandas as pd
 
 TABLE_STRUCTURE = {
-    "Alternatives": [
-        "Capacidad Base (1 Turno)", 
-        "Expansión Modular (2 Turnos + Automatización)", 
-        "Planta de Alta Intensidad (Turnos 24/7)"
-    ],
-    "Demanda Alta": [50000, 250000, 450000],
-    "Demanda Moderada": [150000, 200000, 50000],
-    "Demanda Baja": [100000, -50000, -300000],
+    "Alternatives": [],
 }
 
 def on_table_change():
@@ -88,6 +81,7 @@ def decision_table():
         on_change=on_table_change,
         num_rows="dynamic",
         use_container_width=True,
+        hide_index=True,
     )
 
     st.divider()
