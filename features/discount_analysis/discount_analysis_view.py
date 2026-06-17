@@ -7,6 +7,7 @@ import math
 
 from features.discount_analysis.logic.cle import calcular_descuento_cantidad
 from features.discount_analysis.components.discounts_table import render_discounts_table
+from features.discount_analysis.components.monte_carlo_simulation import render_montecarlo_descuento
 
 def discount_analysis_view():
     st.subheader("Modelos de Inventarios: Descuentos por Cantidad")
@@ -212,106 +213,9 @@ def discount_analysis_view():
     
     st.dataframe(styled_df, use_container_width=True, hide_index=True)
     
-   
-    st.markdown('<div class="section-title">3. Simulación de Riesgo de Demanda (Monte Carlo)</div>', unsafe_allow_html=True)
-    st.write(f"Manteniendo la decisión fija de ordenar **Q* = {Q_optimo:,.0f}** a un precio de **\${precio_optimo:.2f}**, simulamos qué ocurre con el costo si la demanda anual cambia.")
-    
-    col_mc1, col_mc2 = st.columns(2)
-    n_sim = col_mc1.slider("Número de Simulaciones", min_value=1000, max_value=10000, value=10000, step=1000)
-    dist_type = col_mc2.selectbox("Distribución de la Demanda", ["Normal (Incertidumbre)", "Uniforme (Rango Equitativo)"])
-    
-    col_mc3, col_mc4 = st.columns(2)
-    if dist_type == "Normal (Incertidumbre)":
-        cv = col_mc3.slider("Coeficiente de Variación (Volatilidad de demanda)", min_value=0.05, max_value=0.30, value=0.15, step=0.05)
-        std_dev = D * cv
-        st.caption(f"Desviación estándar calculada: **{std_dev:,.2f}** unidades.")
-        range_pct = 0.0
-    else:
-        range_pct = col_mc3.slider("Rango de Variación (±%) alrededor de la demanda", min_value=10, max_value=50, value=20, step=5) / 100
-        std_dev = 0.0
-        
-    if st.button("▶ Ejecutar Simulación de Riesgo", use_container_width=True):
-        np.random.seed(42)
-        if dist_type == "Normal (Incertidumbre)":
-            demands_sim = np.random.normal(D, std_dev, n_sim)
-        else:
-            demands_sim = np.random.uniform(D * (1 - range_pct), D * (1 + range_pct), n_sim)
-            
-        demands_sim = np.clip(demands_sim, 1, None)
-        
-        Ch_opt = holding_value * precio_optimo if is_percentage else holding_value
-        costs_sim = demands_sim * precio_optimo + (demands_sim / Q_optimo) * Co + (Q_optimo / 2) * Ch_opt
-        
-        mean_c = np.mean(costs_sim)
-        std_c = np.std(costs_sim)
-        min_c = np.min(costs_sim)
-        max_c = np.max(costs_sim)
-        p10 = np.percentile(costs_sim, 10)
-        median_c = np.percentile(costs_sim, 50)
-        p90 = np.percentile(costs_sim, 90)
-        
-        risk_pct = (costs_sim > costo_total_minimo).mean() * 100
-        
-      
-        col_rkpi1, col_rkpi2, col_rkpi3 = st.columns(3)
-        with col_rkpi1:
-            st.metric("Costo Promedio Simulado", f"${mean_c:,.2f}")
-        with col_rkpi2:
-            st.metric("Desviación Estándar", f"${std_c:,.2f}")
-        with col_rkpi3:
-            st.metric("Riesgo de Exceder Presupuesto", f"{risk_pct:.1f}%")
-            
-    
-        st.markdown("#### Estadísticas de Riesgo")
-        stat_df = pd.DataFrame({
-            "Métrica / Percentil": ["Mínimo", "Percentil 10%", "Mediana (P50)", "Percentil 90%", "Máximo"],
-            "Costo Total Simulado": [min_c, p10, median_c, p90, max_c]
-        })
-        st.dataframe(stat_df.style.format({"Costo Total Simulado": "${:,.2f}"}), use_container_width=True, hide_index=True)
-        
-        
-        col_gs1, col_gs2 = st.columns(2)
-        
-        with col_gs1:
-            fig_hist = px.histogram(
-                x=costs_sim,
-                nbins=40,
-                color_discrete_sequence=["#3b82f6"],
-                title="Frecuencia de Costo Total Simulado"
-            )
-            fig_hist.add_vline(x=costo_total_minimo, line_dash="dash", line_color="#ef4444", line_width=2, annotation_text="Costo Determinista")
-            fig_hist.update_layout(
-                xaxis_title="Costo Total Anual ($)",
-                yaxis_title="Casos",
-                paper_bgcolor="rgba(0,0,0,0)",
-                plot_bgcolor="rgba(0,0,0,0)",
-                font=dict(color="#e5e7eb")
-            )
-            st.plotly_chart(fig_hist, use_container_width=True)
-            
-        with col_gs2:
-            sorted_costs = np.sort(costs_sim)
-            cdf = np.arange(1, len(sorted_costs) + 1) / len(sorted_costs)
-            
-            fig_cdf = go.Figure()
-            fig_cdf.add_trace(go.Scatter(
-                x=sorted_costs,
-                y=cdf * 100,
-                mode='lines',
-                line=dict(color='#10b981', width=3),
-                name="Prob. Acumulada"
-            ))
-            fig_cdf.add_vline(x=costo_total_minimo, line_dash="dash", line_color="#ef4444", line_width=2, annotation_text="Presupuesto")
-            fig_cdf.update_layout(
-                title="Curva S de Probabilidad Acumulada",
-                xaxis_title="Costo Total Anual ($)",
-                yaxis_title="Probabilidad Acumulada (%)",
-                paper_bgcolor="rgba(0,0,0,0)",
-                plot_bgcolor="rgba(0,0,0,0)",
-                font=dict(color="#e5e7eb")
-            )
-            fig_cdf.update_xaxes(showgrid=True, gridcolor="#2a2d3a")
-            fig_cdf.update_yaxes(showgrid=True, gridcolor="#2a2d3a")
-            st.plotly_chart(fig_cdf, use_container_width=True)
-            
-        st.info(f"💡 Comprar lotes de **{Q_optimo:,.0f}** unidades al precio de **\${precio_optimo:.2f}** resulta en un costo promedio estimado de **\${mean_c:,.2f}**. Debido a la variabilidad aleatoria de la demanda, existe un **{risk_pct:.1f}%** de riesgo de que el costo real sea mayor que el presupuesto de **\${costo_total_minimo:,.2f}**.")
+
+    render_montecarlo_descuento(
+        D, Co, holding_value, is_percentage,
+        precio_optimo, Q_optimo,
+        costo_total_minimo, nivel_optimo
+    )
