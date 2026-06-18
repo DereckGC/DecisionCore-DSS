@@ -6,27 +6,6 @@ import plotly.express as px
 
 
 def run_montecarlo_descuento(D, Co, holding_value, is_percentage, precio_optimo, Q_optimo, n_sim, dist_type, cv=0.15, range_pct=0.20):
-    """
-    Ejecuta la simulación Monte Carlo de riesgo de demanda para el modelo de
-    descuentos por cantidad.
-
-    Parámetros
-    ----------
-    D              : Demanda anual determinista base.
-    Co             : Costo por ordenar.
-    holding_value  : Tasa I o costo fijo Ch según is_percentage.
-    is_percentage  : True si holding_value es una tasa (I), False si es Ch fijo.
-    precio_optimo  : Precio unitario del nivel óptimo.
-    Q_optimo       : Cantidad óptima Q*.
-    n_sim          : Número de simulaciones.
-    dist_type      : "Normal (Incertidumbre)" o "Uniforme (Rango Equitativo)".
-    cv             : Coeficiente de variación (solo para distribución Normal).
-    range_pct      : Rango ±% (solo para distribución Uniforme).
-
-    Retorna
-    -------
-    dict con arrays de demandas/costos simulados y estadísticas clave.
-    """
     np.random.seed(42)
 
     if dist_type == "Normal (Incertidumbre)":
@@ -46,30 +25,25 @@ def run_montecarlo_descuento(D, Co, holding_value, is_percentage, precio_optimo,
 
     return {
         "demands_sim": demands_sim,
-        "costs_sim": costs_sim,
-        "mean_c": float(np.mean(costs_sim)),
-        "std_c": float(np.std(costs_sim)),
-        "min_c": float(np.min(costs_sim)),
-        "max_c": float(np.max(costs_sim)),
-        "p10": float(np.percentile(costs_sim, 10)),
-        "median_c": float(np.percentile(costs_sim, 50)),
-        "p90": float(np.percentile(costs_sim, 90)),
+        "costs_sim":   costs_sim,
+        "mean_c":      float(np.mean(costs_sim)),
+        "std_c":       float(np.std(costs_sim)),
+        "min_c":       float(np.min(costs_sim)),
+        "max_c":       float(np.max(costs_sim)),
+        "p10":         float(np.percentile(costs_sim, 10)),
+        "median_c":    float(np.percentile(costs_sim, 50)),
+        "p90":         float(np.percentile(costs_sim, 90)),
     }
 
 
 def render_montecarlo_descuento(D, Co, holding_value, is_percentage, precio_optimo, Q_optimo, costo_total_minimo, nivel_optimo):
-    """
-    Renderiza la sección completa de Simulación Monte Carlo para el análisis
-    de descuentos por cantidad.
-    """
     st.markdown('<div class="section-title">3. Simulación de Riesgo de Demanda (Monte Carlo)</div>', unsafe_allow_html=True)
     st.write(
         f"Manteniendo la decisión fija de ordenar **Q* = {Q_optimo:,.0f}** "
-        f"a un precio de **${precio_optimo:.2f}**, simulamos qué ocurre con el "
+        f"a un precio de **\\${precio_optimo:.2f}**, simulamos qué ocurre con el "
         f"costo si la demanda anual cambia."
     )
 
-    # ── Parámetros de simulación ──────────────────────────────────────────────
     col_mc1, col_mc2 = st.columns(2)
     n_sim = col_mc1.slider(
         "Número de Simulaciones",
@@ -94,25 +68,23 @@ def render_montecarlo_descuento(D, Co, holding_value, is_percentage, precio_opti
             min_value=10, max_value=50, value=20, step=5
         ) / 100
 
-    # ── Botón de ejecución ───────────────────────────────────────────────────
     if st.button("▶ Ejecutar Simulación de Riesgo", use_container_width=True):
         result = run_montecarlo_descuento(
             D, Co, holding_value, is_percentage,
             precio_optimo, Q_optimo,
             n_sim, dist_type, cv, range_pct
         )
-        st.session_state.discount_mc_result = result
-        st.session_state.discount_mc_costo_base = costo_total_minimo
-        st.session_state.discount_mc_Q = Q_optimo
-        st.session_state.discount_mc_precio = precio_optimo
+        st.session_state.discount_mc_result      = result
+        st.session_state.discount_mc_costo_base  = costo_total_minimo
+        st.session_state.discount_mc_Q           = Q_optimo
+        st.session_state.discount_mc_precio      = precio_optimo
 
-    # ── Renderizado de resultados (persistente tras el botón) ────────────────
     if "discount_mc_result" not in st.session_state:
         return
 
-    result = st.session_state.discount_mc_result
+    result     = st.session_state.discount_mc_result
     costo_base = st.session_state.discount_mc_costo_base
-    costs_sim = result["costs_sim"]
+    costs_sim  = result["costs_sim"]
 
     risk_pct = (costs_sim > costo_base).mean() * 100
 
@@ -131,12 +103,10 @@ def render_montecarlo_descuento(D, Co, holding_value, is_percentage, precio_opti
     )
 
 
-# ── Helpers privados ──────────────────────────────────────────────────────────
-
 def _render_kpis(result, risk_pct):
     col1, col2, col3 = st.columns(3)
     col1.metric("Costo Promedio Simulado", f"${result['mean_c']:,.2f}")
-    col2.metric("Desviación Estándar", f"${result['std_c']:,.2f}")
+    col2.metric("Desviación Estándar",     f"${result['std_c']:,.2f}")
     col3.metric("Riesgo de Exceder Presupuesto", f"{risk_pct:.1f}%")
 
 
@@ -211,8 +181,8 @@ def _render_charts(costs_sim, costo_base):
 def _render_insight(Q_optimo, precio_optimo, mean_c, risk_pct, costo_base):
     st.info(
         f"💡 Comprar lotes de **{Q_optimo:,.0f}** unidades al precio de "
-        f"**${precio_optimo:.2f}** resulta en un costo promedio estimado de "
-        f"**${mean_c:,.2f}**. Debido a la variabilidad aleatoria de la demanda, "
+        f"**\\${precio_optimo:.2f}** resulta en un costo promedio estimado de "
+        f"**\\${mean_c:,.2f}**. Debido a la variabilidad aleatoria de la demanda, "
         f"existe un **{risk_pct:.1f}%** de riesgo de que el costo real sea mayor "
-        f"que el presupuesto de **${costo_base:,.2f}**."
+        f"que el presupuesto de **\\${costo_base:,.2f}**."
     )

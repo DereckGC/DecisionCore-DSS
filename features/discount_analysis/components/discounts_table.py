@@ -16,37 +16,41 @@ def validate_discount_df(df):
     if df.isnull().values.any():
         return False, "Por favor complete todas las celdas de la tabla."
     try:
-        min_q = df["Cantidad Mínima"].astype(float).tolist()
+        min_q  = df["Cantidad Mínima"].astype(float).tolist()
         prices = df["Precio Unitario"].astype(float).tolist()
     except Exception:
         return False, "Todos los valores en la tabla deben ser números."
-        
+
     sorted_pairs = sorted(zip(min_q, prices), key=lambda x: x[0])
-    
+
     for q, p in sorted_pairs:
         if q < 0:
             return False, "Las cantidades mínimas no pueden ser negativas."
         if p <= 0:
             return False, "Los precios deben ser mayores a cero."
-            
+
     for i in range(len(sorted_pairs) - 1):
         if sorted_pairs[i][0] == sorted_pairs[i+1][0]:
             return False, f"Cantidad mínima duplicada en {sorted_pairs[i][0]:,.0f}."
         if sorted_pairs[i][1] <= sorted_pairs[i+1][1]:
-            return False, f"Los precios deben ser decrecientes. El precio unitario de {sorted_pairs[i+1][0]:,.0f} ({sorted_pairs[i+1][1]:.2f}) debe ser menor que el de {sorted_pairs[i][0]:,.0f} ({sorted_pairs[i][1]:.2f})."
-            
+            return False, (
+                f"Los precios deben ser decrecientes. El precio unitario de "
+                f"{sorted_pairs[i+1][0]:,.0f} ({sorted_pairs[i+1][1]:.2f}) debe ser "
+                f"menor que el de {sorted_pairs[i][0]:,.0f} ({sorted_pairs[i][1]:.2f})."
+            )
+
     return True, ""
 
 def on_discount_table_change():
     editor_state = st.session_state.discount_table_editor
-    updated_df = st.session_state.discount_df.copy()
+    updated_df   = st.session_state.discount_df.copy()
 
     for idx, changes in editor_state.get("edited_rows", {}).items():
         for col, val in changes.items():
             updated_df.at[idx, col] = val
 
     for row in editor_state.get("added_rows", []):
-        new_row = {col: row.get(col, None) for col in updated_df.columns}
+        new_row    = {col: row.get(col, None) for col in updated_df.columns}
         updated_df = pd.concat([updated_df, pd.DataFrame([new_row])], ignore_index=True)
 
     deleted = editor_state.get("deleted_rows", [])
@@ -57,10 +61,13 @@ def on_discount_table_change():
 
 def render_discounts_table():
     init_discount_table()
-    
-    st.markdown('<div style="margin-top:15px; margin-bottom:5px; font-weight:600; color:#e5e7eb; font-size:14px;">Tabla de Rangos de Descuento</div>', unsafe_allow_html=True)
+
+    st.markdown(
+        '<div style="margin-top:15px; margin-bottom:5px; font-weight:600; color:#e5e7eb; font-size:14px;">Tabla de Rangos de Descuento</div>',
+        unsafe_allow_html=True
+    )
     st.caption("Nota: Agregue o modifique filas para definir los niveles de descuento. Asegúrese de que las cantidades mínimas sean crecientes y los precios decrecientes.")
-    
+
     st.data_editor(
         st.session_state.discount_df,
         key="discount_table_editor",
@@ -85,7 +92,7 @@ def render_discounts_table():
             )
         }
     )
-    
+
     valid, message = validate_discount_df(st.session_state.discount_df)
     if not valid:
         if st.session_state.discount_df.empty:
@@ -94,5 +101,5 @@ def render_discounts_table():
             st.warning(f"⚠️ {message}")
     else:
         st.success("✓ Tabla de descuentos configurada correctamente.")
-        
+
     return valid, message
