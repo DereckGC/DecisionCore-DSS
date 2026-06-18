@@ -16,7 +16,7 @@ def render_results_charts(results_dict):
     poe_df = build_poe_df(results_dict)
     payoff_df = build_payoff_df()
 
-    tab1, tab2, tab3 = st.tabs(["Criterios", "VME y POE", "Matriz"])
+    tab1, tab2 = st.tabs(["Criterios", "VME y POE"])
 
     with tab1:
         if not criteria_df.empty:
@@ -39,9 +39,6 @@ def render_results_charts(results_dict):
                 st.markdown("**POE por alternativa**")
                 st.bar_chart(poe_df["POE"], use_container_width=True)
 
-    with tab3:
-        if not payoff_df.empty:
-            st.bar_chart(payoff_df, use_container_width=True)
 
 
 def build_criteria_df(results_dict):
