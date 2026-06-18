@@ -89,7 +89,7 @@ def render_discounts_table():
     valid, message = validate_discount_df(st.session_state.discount_df)
     if not valid:
         if st.session_state.discount_df.empty:
-            st.info("💡 La tabla de descuentos está vacía. Ingrese al menos un rango (ej: Cantidad Mínima 0 y su Precio Unitario) para comenzar.")
+            st.info("💡 La tabla de descuentos está vacía. Ingrese al menos un rango para comenzar.")
         else:
             st.warning(f"⚠️ {message}")
     else:
