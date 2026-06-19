@@ -1,4 +1,5 @@
 import streamlit as st
+from features.forecast.forecast_view import forecast_view
 from features.desicion_analysis.desicion_analysis_view import decision_analysis
 from features.discount_analysis.discount_analysis_view import discount_analysis_view
 
@@ -29,7 +30,7 @@ def sidebar():
 def menu_selection(option):
     if(option == FORECAST_MODULE):
         #llamada al modulo
-        st.info("Módulo de Pronósticos seleccionado. Cargando...")
+        forecast_view()
     elif(option == DESCICION_MODULE):
         #llamada al modulo
         decision_analysis()
