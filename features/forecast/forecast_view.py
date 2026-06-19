@@ -140,9 +140,7 @@ def forecast_view():
             with col2:
                 st.metric("ES", f"{next_es:.2f}")
 
-            # =========================
-            # BOTÓN MONTE CARLO (FUERA DE COLUMNAS)
-            # =========================
+        # MONTE CARLO
 
         if (
             st.session_state.get("mostrar_resultados", False)
