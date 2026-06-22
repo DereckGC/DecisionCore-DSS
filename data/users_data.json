@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Administrador DSS",
+    "email": "admin@decisioncore.com",
+    "password": "admin123",
+    "role": "Administrador de demostracion"
+  },
+  {
+    "name": "Analista Ejecutivo",
+    "email": "analista@decisioncore.com",
+    "password": "demo123",
+    "role": "Analista de decisiones"
+  }
+]
