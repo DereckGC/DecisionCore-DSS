@@ -43,10 +43,10 @@ def sidebar():
 
 def menu_selection(option):
     if option == FORECAST_MODULE:
-        st.info("Modulo de pronosticos en preparacion.")
+        forecast_view()
     elif option == DECISION_MODULE:
         decision_analysis()
     elif option == INVENTORY_MODULE:
         st.info("Modulo de inventario en preparacion.")
     elif option == DISCOUNTS_MODULE:
-        st.info("Modulo de descuentos en preparacion.")
+        discount_analysis_view()
