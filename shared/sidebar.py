@@ -1,6 +1,7 @@
 import streamlit as st
-
+from features.forecast.forecast_view import forecast_view
 from features.desicion_analysis.desicion_analysis_view import decision_analysis
+from features.discount_analysis.discount_analysis_view import discount_analysis_view
 
 
 FORECAST_MODULE = "Pronosticos"

@@ -1,5 +1,5 @@
 import streamlit as st
-
+from shared.sidebar import sidebar
 from auth.users import get_user_by_email
 
 
@@ -64,9 +64,7 @@ sync_auth_from_query_params()
 if not st.session_state.authenticated:
     redirect_to_login()
 
-st.title("DecisionCore DSS")
+st.title("VitalCore-DSS")
 st.caption("Panel de analisis cuantitativo para soporte a decisiones empresariales.")
-
-from shared.sidebar import sidebar
 
 sidebar()
