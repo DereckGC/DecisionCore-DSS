@@ -2,6 +2,7 @@ import streamlit as st
 from features.forecast.forecast_view import forecast_view
 from features.desicion_analysis.desicion_analysis_view import decision_analysis
 from features.discount_analysis.discount_analysis_view import discount_analysis_view
+from features.inventory.inventory_view import inventory_view
 
 
 FORECAST_MODULE = "Pronosticos"
@@ -47,6 +48,6 @@ def menu_selection(option):
     elif option == DECISION_MODULE:
         decision_analysis()
     elif option == INVENTORY_MODULE:
-        st.info("Modulo de inventario en preparacion.")
+        inventory_view()
     elif option == DISCOUNTS_MODULE:
         discount_analysis_view()
