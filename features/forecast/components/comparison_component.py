@@ -1,5 +1,7 @@
 import streamlit as st
-import matplotlib.pyplot as plt
+import pandas as pd
+import plotly.graph_objects as go
+
 
 def display_comparison(data, methods_data, metrics_df):
 
@@ -8,39 +10,51 @@ def display_comparison(data, methods_data, metrics_df):
     with col1:
         st.subheader("Comparación de Métodos")
 
-        fig, ax = plt.subplots(figsize=(12, 6))
+        fig = go.Figure()
 
-        ax.plot(
-            data,
-            'ko-',
-            label='Datos Reales',
-            linewidth=2,
-            markersize=6
+        # Datos reales
+        fig.add_trace(go.Scatter(
+            y=data,
+            mode="lines+markers",
+            name="Datos Reales",
+            line=dict(color="#e5e7eb", width=3),
+            marker=dict(size=6)
+        ))
+
+        # WMA
+        fig.add_trace(go.Scatter(
+            y=methods_data["WMA"],
+            mode="lines",
+            name="WMA",
+            line=dict(color="#4f80ff", width=3)
+        ))
+
+        # ES
+        fig.add_trace(go.Scatter(
+            y=methods_data["ES"],
+            mode="lines",
+            name="Suavizamiento Exponencial",
+            line=dict(color="#f97316", width=3)
+        ))
+
+        fig.update_layout(
+            template="plotly_dark",
+            paper_bgcolor="#1a1c24",
+            plot_bgcolor="#1a1c24",
+            height=420,
+            margin=dict(l=20, r=20, t=40, b=20),
+            legend=dict(
+                orientation="h",
+                yanchor="bottom",
+                y=-0.25,
+                xanchor="center",
+                x=0.5
+            ),
+            xaxis_title="Período",
+            yaxis_title="Valor"
         )
 
-        ax.plot(
-            methods_data['WMA'],
-            'b--',
-            label='WMA',
-            alpha=0.7,
-            linewidth=2
-        )
-
-        ax.plot(
-            methods_data['ES'],
-            'r--',
-            label='Suavizamiento Exponencial',
-            alpha=0.7,
-            linewidth=2
-        )
-
-        ax.set_xlabel('Período', fontsize=12)
-        ax.set_ylabel('Valor', fontsize=12)
-
-        ax.legend(fontsize=10)
-        ax.grid(True, alpha=0.3)
-
-        st.pyplot(fig)
+        st.plotly_chart(fig, use_container_width=True)
 
     with col2:
         st.subheader("Métricas")
@@ -51,15 +65,15 @@ def display_comparison(data, methods_data, metrics_df):
         )
 
         best_method = metrics_df.loc[
-            metrics_df['DMA'].idxmin(),
-            'Método'
+            metrics_df["DMA"].idxmin(),
+            "Método"
         ]
 
         best_dma = metrics_df.loc[
-            metrics_df['DMA'].idxmin(),
-            'DMA'
+            metrics_df["DMA"].idxmin(),
+            "DMA"
         ]
 
         st.success(
-            f"Mejor: **{best_method}** (DMA: {best_dma:.4f})"
+            f"Mejor modelo: **{best_method}** (DMA: {best_dma:.4f})"
         )
