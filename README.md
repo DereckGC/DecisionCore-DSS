@@ -1,38 +1,23 @@
-# DecisionCore DSS
+# 📊 Decision Core DSS - Decision Support System
 
-DecisionCore DSS uses two small local servers:
+Decision Core DSS is an interactive Decision Support System developed to evaluate financial performance, operational behavior, and corporate risk profiles under market uncertainty.
 
-- `portal.py`: Flask login portal rendered with HTML/CSS.
-- `app.py`: Streamlit dashboard shown after login.
-- `run_demo.py`: starts both servers together.
-- `auth/users.py`: shared demo-user validation from `data/users_data.json`.
-- `templates/login.html` and `static/login.css`: login page design.
+---
 
-## Run
+## 🎯 Project Purpose
 
-Install dependencies:
+The system enables real-time **Sensitivity Analysis** and scenario simulation by connecting three core pillars of quantitative analysis:
+1. **Demand Forecasting:** Sales and volume projections utilizing Simple Exponential Smoothing (SES) models.
+2. **Operational Optimization:** Calculation of the Economic Order Quantity (EOQ) and minimization of inventory carrying/ordering costs via Wilson's Model.
+3. **Risk Analysis (Monte Carlo):** Large-scale stochastic simulation (10,000+ iterations) to model market volatility and assess impacts on net profitability.
 
-```powershell
-python -m pip install -r requirements.txt
-```
+---
 
-Start the demo:
+## 🛠️ Tech Stack
 
-```powershell
-python run_demo.py
-```
+* **Language:** Python 3.13+
+* **Web Framework:** Streamlit
+* **Data Processing & Mathematics:** Pandas, NumPy
+* **Data Visualization:** Matplotlib
 
-Open the login:
-
-```text
-http://localhost:5000
-```
-
-Demo credentials:
-
-```text
-admin@decisioncore.com
-admin123
-```
-
-Do not open the dashboard first. The login portal redirects to Streamlit after successful access.
+---
